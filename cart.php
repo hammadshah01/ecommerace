@@ -1,0 +1,211 @@
+<?php include 'header.php'?>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.1.0/css/v4-shims.min.css"
+    integrity="sha512-p++g4gkFY8DBqLItjIfuKJPFvTPqcg2FzOns2BNaltwoCOrXMqRIOqgWqWEvuqsj/3aVdgoEo2Y7X6SomTfUPA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="./assets/css/table.css">
+<div class="card-body">
+    <div class="container mt-5 ">
+
+        <table class="table  table-bordered">
+            <thead class="thead-dark ">
+                <tr>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Image</th>
+                    <th colspan="2">Action</th>
+                </tr>
+            </thead>
+            <?php
+
+include 'config.php';
+$sql1 = "SELECT * FROM cart";
+$result1 = mysqli_query($conn, $sql1);
+if (mysqli_num_rows($result1)) {
+
+    ?>
+            <tbody>
+                <?php
+
+    while ($row1 = mysqli_fetch_assoc($result1)) {
+
+        ?>
+                <tr>
+                    <td>
+                        <p>
+                            <?php echo $row1['title'] ?>
+                        </p>
+
+                    </td>
+
+                    <td>
+                        <p id="price">
+                            <?php echo $row1['price'] ?>
+                        </p>
+
+
+                    </td>
+
+                    <td>
+
+                        <form id='quan' action="design.php" method="POST">
+                            <div class="row">
+
+                                <div class="col-auto">
+                                    <ul class="list-inline pb-3">
+                                        <li class="list-inline-item text-right">
+                                            <input type="hidden" name="id" id="product-id"
+                                                value="<?php echo $row1['p_id'] ?>">
+                                            <input type="hidden" name="price" id="product-id"
+                                                value="<?php echo $row1['price'] ?>">
+                                            <input type="hidden" name="name" id="product-id"
+                                                value="<?php echo $row1['title'] ?>">
+                                            <input type="hidden" name="quan" id="product-quanity"
+                                                class="product-quantity" value="1">
+                                            <input type="hidden" name="cart_id" id="cart-id"
+                                                value="<?php echo $row1['id'] ?>">
+                                        </li>
+                                        <li class="list-inline-item"><span class="quan-btn btn-minus" class="btn-minus"
+                                                data-val="<?php echo $row1['id'] ?>"><i class="fa fa-angle-left"
+                                                    value="<?php echo $row1['price'] ?>"></i></span></li>
+
+
+                                        <li class="list-inline-item"> <span class="badge text-black-50" id="var-value">
+                                                <?php echo $row1['qty'] ?>
+                                            </span></li>
+
+                                        <li class="list-inline-item"><span class="quan-btn" id="btn-plus"
+                                                class="btn-plus" data-plus="<?php echo $row1['id'] ?>"><i
+                                                    class="fa fa-angle-right"></i></span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row pb-3">
+                            </div>
+                    </td>
+                    <td><img class="card-img" src="../admin/upload/<?php echo $row1['c_img'] ?>" width="80px"
+                            height="50px">
+                    </td>
+                    <td><button class="check-btn" type="submit" name='submit'>Check out</button></td>
+                    </form>
+                    <td>
+                        <a href="delete-cart.php?id=<?php echo $row1['id'] ?>"><i class="fa fa-trash-o"></i></a>
+                    </td>
+
+                </tr>
+
+
+                <?php
+}
+}
+?>
+
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+
+
+
+
+<script>
+//    x= document.getElementById('product-quanity').value;
+//    y= document.querySelector('#price').innerHTML;
+//    z= document.getElementById('var-value').innerText;
+//    y= y.replace(/\$/g, "");
+//    console.log(z);
+</script>
+
+<script src="assets/js/jquery-1.11.0.min.js"></script>
+<script>
+    // $('#btn-plus').click(()=>{
+    //   x=  parseInt($('#var-value').val())+1;
+    //   console.log(x);
+    // })
+</script>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"
+    integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script src="assets/js/jquery-migrate-1.2.1.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/templatemo.js"></script>
+<script src="assets/js/custom.js"></script>
+
+<!-- <script>
+      $("#btn-minus").click(function () {
+        var price = $(this).parent().text()
+        console.log(price);
+            var val = $("#var-value").html();
+            val = val == "1" ? val : val - 1;
+            $("#var-value").html(val);
+            $("#product-quanity").val(val);
+
+        });
+        $("#btn-plus").click(function () {
+            var val = $("#var-value").html();
+            val++;
+            $("#var-value").html(val);
+            $("#product-quanity").val(val);
+
+        });
+</script> -->
+<script>
+
+    $(document).on("click", ".btn-minus", function () {
+        var $p_id = $(this).attr('data-val');
+        alert($p_id)
+    $.ajax({
+        url: 'update-num.php',
+        type: 'POST',
+        data: {
+            id: $p_id
+        },
+        success: (data) => {
+            $('#var-value').html(data);
+        }
+    })
+    })
+
+    $(document).on("click", ".btn-plus", function () {
+        var $p_id = $(this).attr('data-plus');
+        alert($p_id)
+        // $.ajax({
+        //         url: 'update-ajax.php',
+        //         type: 'POST',
+        //         data: {
+        //             id: $p_id
+        //         },
+        //         success: (data) => {
+        //             $('#var-value').html(data);
+
+        //         }
+        //     })
+
+
+
+    })
+
+    // CHECK BUTTON
+
+//       $(document).on("click", ".check-btn", function () {
+//   $qtn=parseInt($('#var-value').text());
+//   $('#product-quanity').val($qtn)
+//             $.ajax({
+//                 url: 'design.php',
+//                 type: 'POST',
+//                 data: {
+//                    quan: $qtn
+//                 },
+//                 success: (data) => {
+//                     $('#var-value').html();
+
+//                 }
+//             })
+
+
+
+//         })
+</script>
